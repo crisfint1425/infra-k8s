@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pkcs11-cfg
+  namespace: ejbca
+data:
+  pkcs11.cfg: |
+    name = SoftHSM2
+    library = /opt/pkcs11/libsofthsm2.so
+    slot = 0
+

@@ -1,0 +1,179 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "9"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"ejbca","namespace":"ejbca"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"ejbca"}},"strategy":{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"labels":{"app":"ejbca"}},"spec":{"containers":[{"env":[{"name":"TZ","value":"America/Cancun"},{"name":"EJBCA_DB_URL","value":"jdbc:postgresql://ejbca-pg-rw.ejbca.svc.cluster.local:5432/ejbca"},{"name":"EJBCA_DB_USERNAME","valueFrom":{"secretKeyRef":{"key":"username","name":"ejbca-pg-app"}}},{"name":"EJBCA_DB_PASSWORD","valueFrom":{"secretKeyRef":{"key":"password","name":"ejbca-pg-app"}}},{"name":"EJBCA_ADMIN_USERNAME","value":"superadmin"},{"name":"EJBCA_ADMIN_PASSWORD","value":"Admin#2025"}],"envFrom":[{"secretRef":{"name":"softhsm-pins"}}],"image":"keyfactor/ejbca-ce:latest","imagePullPolicy":"Always","name":"ejbca","ports":[{"containerPort":8443,"protocol":"TCP"}],"readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/","port":8443,"scheme":"HTTPS"},"initialDelaySeconds":30,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1},"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/opt/pkcs11","name":"pkcs11-lib","readOnly":true},{"mountPath":"/etc/ejbca/pkcs11","name":"pkcs11-cfg","readOnly":true},{"mountPath":"/var/lib/softhsm","name":"softhsm-tokens","readOnly":true}]},{"args":["sleep infinity"],"command":["/bin/sh","-c"],"env":[{"name":"SOFTHSM2_CONF","value":"/etc/softhsm2/softhsm2.conf"}],"image":"ghcr.io/opendnssec/softhsm:v2.6.1","name":"softhsm2","volumeMounts":[{"mountPath":"/var/lib/softhsm","name":"softhsm-tokens"}]}],"dnsPolicy":"ClusterFirst","initContainers":[{"args":["set -e\nSRC=\"/usr/lib/x86_64-linux-gnu/softhsm/libsofthsm2.so\"\nif [ ! -f \"$SRC\" ]; then\n  SRC=$(ldconfig -p | awk '/libsofthsm2.so/{print $4; exit}')\nfi\ncp \"$SRC\" /opt/pkcs11/libsofthsm2.so\n"],"command":["/bin/sh","-c"],"image":"ghcr.io/opendnssec/softhsm:v2.6.1","name":"fetch-libsofthsm","volumeMounts":[{"mountPath":"/opt/pkcs11","name":"pkcs11-lib"}]}],"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30,"volumes":[{"name":"softhsm-tokens","persistentVolumeClaim":{"claimName":"softhsm-pvc"}},{"emptyDir":{},"name":"pkcs11-lib"},{"configMap":{"items":[{"key":"pkcs11.cfg","path":"pkcs11.cfg"}],"name":"pkcs11-cfg"},"name":"pkcs11-cfg"}]}}}}
+  creationTimestamp: "2025-11-09T03:46:59Z"
+  generation: 9
+  name: ejbca
+  namespace: ejbca
+  resourceVersion: "147103"
+  uid: d2d0b427-2a99-461f-9a22-2f5fdd3447e9
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ejbca
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-11-09T10:11:09-05:00"
+      creationTimestamp: null
+      labels:
+        app: ejbca
+    spec:
+      containers:
+      - env:
+        - name: TZ
+          value: America/Cancun
+        - name: EJBCA_DB_URL
+          value: jdbc:postgresql://ejbca-pg-rw.ejbca.svc.cluster.local:5432/ejbca
+        - name: EJBCA_DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: ejbca-pg-app
+        - name: EJBCA_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: ejbca-pg-app
+        - name: EJBCA_ADMIN_USERNAME
+          value: superadmin
+        - name: EJBCA_ADMIN_PASSWORD
+          value: Admin#2025
+        envFrom:
+        - secretRef:
+            name: softhsm-pins
+        image: keyfactor/ejbca-ce:latest
+        imagePullPolicy: Always
+        name: ejbca
+        ports:
+        - containerPort: 8443
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/keyfactor/ejbca/conf/ejbca.properties
+          name: ejbca-p11
+          readOnly: true
+          subPath: ejbca.properties
+        - mountPath: /opt/keyfactor/ejbca/conf/web.properties
+          name: ejbca-p11
+          readOnly: true
+          subPath: web.properties
+        - mountPath: /opt/pkcs11
+          name: pkcs11-lib
+          readOnly: true
+        - mountPath: /etc/ejbca/pkcs11
+          name: pkcs11-cfg
+          readOnly: true
+        - mountPath: /var/lib/softhsm
+          name: softhsm-tokens
+          readOnly: true
+      - args:
+        - |
+          set -e
+          apk add --no-cache softhsm ca-certificates
+          # dejar el sidecar vivo
+          tail -f /dev/null
+        command:
+        - /bin/sh
+        - -c
+        env:
+        - name: SOFTHSM2_CONF
+          value: /etc/softhsm2/softhsm2.conf
+        image: alpine:3.20
+        imagePullPolicy: IfNotPresent
+        name: softhsm2
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/softhsm
+          name: softhsm-tokens
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - args:
+        - |
+          set -e
+          apk add --no-cache softhsm ca-certificates
+          SRC=$(ldconfig -p | awk '/libsofthsm2.so/{print $4; exit}')
+          if [ -z "$SRC" ]; then
+            # ruta típica en Alpine si ldconfig no la lista
+            SRC=/usr/lib/softhsm/libsofthsm2.so
+          fi
+          mkdir -p /opt/pkcs11
+          cp "$SRC" /opt/pkcs11/libsofthsm2.so
+        command:
+        - /bin/sh
+        - -c
+        image: alpine:3.20
+        imagePullPolicy: IfNotPresent
+        name: fetch-libsofthsm
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/pkcs11
+          name: pkcs11-lib
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: ejbca-p11
+        name: ejbca-p11
+      - name: softhsm-tokens
+        persistentVolumeClaim:
+          claimName: softhsm-pvc
+      - emptyDir: {}
+        name: pkcs11-lib
+      - configMap:
+          defaultMode: 420
+          items:
+          - key: pkcs11.cfg
+            path: pkcs11.cfg
+          name: pkcs11-cfg
+        name: pkcs11-cfg
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-11-09T03:49:49Z"
+    lastUpdateTime: "2025-11-09T03:49:49Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2025-11-09T14:36:18Z"
+    lastUpdateTime: "2025-11-09T15:22:41Z"
+    message: ReplicaSet "ejbca-59b5c4b6df" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 9
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ejbca
+commonLabels:
+  app: ejbca
+resources:
+  - deploy.yaml
+  - service.yaml
+  # - ingress.yaml
+  - cm-ejbca-p11.yaml
+  - cm-pkcs11-cfg.yaml
+  # - pvc-softhsm.yaml
+  # - sealedsecret-ejbca-pg-app.yaml
+

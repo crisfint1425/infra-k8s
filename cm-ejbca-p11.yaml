@@ -1,0 +1,74 @@
+apiVersion: v1
+data:
+  ejbca.properties: |
+    #appserver.home=/opt/wildfly
+
+    ejbca.productionmode=true
+
+    # Allow override from /etc/ejbca/conf/
+    allow.external-dynamic.configuration=true
+
+    #------------------- EJBCA Healthcheck settings -------------
+    healthcheck.amountfreemem=16
+    healthcheck.dbquery=SELECT 1 FROM CertificateData WHERE fingerprint='XX'
+    healthcheck.authorizedips=ANY
+    healthcheck.catokensigntest=true
+    healthcheck.publisherconnections=false
+    healthcheck.maintenancefile=/etc/ejbca/conf/maintenance.properties
+    healthcheck.maintenancepropertyname=DOWN_FOR_MAINTENANCE
+    healthcheck.okmessage=ALLOK
+    healthcheck.customerrormessage=EJBCANOTOK
+    healthcheck.sendservererror=true
+
+    #------------------- CLI settings -------------
+    ejbca.cli.defaultusername=ejbca
+    ejbca.cli.defaultpassword=ejbca
+
+    # By default, EJBCA keeps a list of every EJBCA instance's hostname that has started in this cluster
+    # and allows for example Services to be pinned to a specific set of hostnames.
+    # In environments that has many short-lived instances with different hostnames this should be disabled.
+    #
+    # Default: true
+    ejbca.nodetracking=false
+    ejbca.p11.enabled=true
+    ejbca.p11.library.path=/opt/pkcs11/libsofthsm2.so
+    ejbca.features.pkcs11.enabled=true
+  web.properties: |
+    httpserver.pubhttp=80
+    httpserver.pubhttps=443
+    httpserver.privhttps=443
+    httpserver.external.privhttps=443
+    web.reqcertindb=false
+
+    # The CA servers DNS host name, must exist on client using the admin GUI.
+    httpsserver.hostname=ejbca-54c8d7556c-nv6fx
+
+    #cryptotoken.p11.lib.114.file=/opt/keyfactor/cloudhsm/lib/libliquidsec_pkcs11.so
+
+    cryptotoken.p11.lib.255.name=P11 Proxy
+    cryptotoken.p11.lib.255.file=/opt/keyfactor/p11proxy-client/p11proxy-client.so
+    cryptotoken.p11.lib.255.canGenerateKeyMsg=ClientToolBox must be used to generate keys for this HSM provider.
+    # Normally key generation will be allowed via the UI
+    cryptotoken.p11.lib.255.canGenerateKey=true
+
+    # Enable usage of Azure Key Vault Crypto Token in the Admin UI
+    keyvault.cryptotoken.enabled=true
+
+    # Enable usage of AWS KMS Crypto Token in the Admin UI
+    awskms.cryptotoken.enabled=true
+
+    # Enable P11NG for EJBCA to use for CloudHSM and other PKCS11 integrations
+    p11ng.cryptotoken.enabled=true
+    web.docbaseuri=disabled
+    web.reqcert=false
+    cryptotoken.availabletypes=SOFT,PKCS11,AzureKeyVault
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"ejbca.properties":"#appserver.home=/opt/wildfly\n\nejbca.productionmode=true\n\n# Allow override from /etc/ejbca/conf/\nallow.external-dynamic.configuration=true\n\n#------------------- EJBCA Healthcheck settings -------------\nhealthcheck.amountfreemem=16\nhealthcheck.dbquery=SELECT 1 FROM CertificateData WHERE fingerprint='XX'\nhealthcheck.authorizedips=ANY\nhealthcheck.catokensigntest=true\nhealthcheck.publisherconnections=false\nhealthcheck.maintenancefile=/etc/ejbca/conf/maintenance.properties\nhealthcheck.maintenancepropertyname=DOWN_FOR_MAINTENANCE\nhealthcheck.okmessage=ALLOK\nhealthcheck.customerrormessage=EJBCANOTOK\nhealthcheck.sendservererror=true\n\n#------------------- CLI settings -------------\nejbca.cli.defaultusername=ejbca\nejbca.cli.defaultpassword=ejbca\n\n# By default, EJBCA keeps a list of every EJBCA instance's hostname that has started in this cluster\n# and allows for example Services to be pinned to a specific set of hostnames.\n# In environments that has many short-lived instances with different hostnames this should be disabled.\n#\n# Default: true\nejbca.nodetracking=false\nejbca.p11.enabled=true\nejbca.p11.library.path=/opt/pkcs11/libsofthsm2.so\nejbca.features.pkcs11.enabled=true\n","web.properties":"httpserver.pubhttp=80\nhttpserver.pubhttps=443\nhttpserver.privhttps=443\nhttpserver.external.privhttps=443\nweb.reqcertindb=false\n\n# The CA servers DNS host name, must exist on client using the admin GUI.\nhttpsserver.hostname=ejbca-54c8d7556c-nv6fx\n\n#cryptotoken.p11.lib.114.file=/opt/keyfactor/cloudhsm/lib/libliquidsec_pkcs11.so\n\ncryptotoken.p11.lib.255.name=P11 Proxy\ncryptotoken.p11.lib.255.file=/opt/keyfactor/p11proxy-client/p11proxy-client.so\ncryptotoken.p11.lib.255.canGenerateKeyMsg=ClientToolBox must be used to generate keys for this HSM provider.\n# Normally key generation will be allowed via the UI\ncryptotoken.p11.lib.255.canGenerateKey=true\n\n# Enable usage of Azure Key Vault Crypto Token in the Admin UI\nkeyvault.cryptotoken.enabled=true\n\n# Enable usage of AWS KMS Crypto Token in the Admin UI\nawskms.cryptotoken.enabled=true\n\n# Enable P11NG for EJBCA to use for CloudHSM and other PKCS11 integrations\np11ng.cryptotoken.enabled=true\nweb.docbaseuri=disabled\nweb.reqcert=false\ncryptotoken.availabletypes=SOFT,PKCS11,AzureKeyVault\n"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":null,"name":"ejbca-p11","namespace":"ejbca"}}
+  creationTimestamp: "2025-11-09T15:19:17Z"
+  name: ejbca-p11
+  namespace: ejbca
+  resourceVersion: "146530"
+  uid: e3d8c518-0556-4741-8e30-49d6d2bbb2ba
