@@ -1,14 +1,26 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
 namespace: ejbca
-commonLabels:
-  app: ejbca
+
+# Reemplaza commonLabels por labels (forma nueva)
+labels:
+  - includeSelectors: true
+    pairs:
+      app: ejbca
+
 resources:
   - deploy.yaml
   - service.yaml
-  # - ingress.yaml
+  - ingress.yaml
   - cm-ejbca-p11.yaml
-  - cm-pkcs11-cfg.yaml
-  # - pvc-softhsm.yaml
-  # - sealedsecret-ejbca-pg-app.yaml
+  - cm-pkcs11.yaml       # <— nombre correcto
+  - pvc-softhsm.yaml
+
+# ⚠️ Repo público: evita subir Secrets en claro.
+# Si usas Sealed Secrets, descomenta lo de abajo y borra los secrets planos.
+#  - sealedsecret-ejbca-pg-app.yaml
+# Si NO usas Sealed Secrets, puedes referenciar (temporalmente) los secrets planos:
+#  - secret-ejbca-pg-app.yaml
+#  - secret-softhsm-pins.yaml
 
