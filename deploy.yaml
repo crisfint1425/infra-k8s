@@ -4,7 +4,7 @@ metadata:
   name: ejbca
   namespace: ejbca
 spec:
-  replicas: 2               # ajusta a lo que quieras mantener
+  replicas: 1               # ajusta a lo que quieras mantener
   selector:
     matchLabels:
       app: ejbca
