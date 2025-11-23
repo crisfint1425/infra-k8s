@@ -16,7 +16,10 @@ resources:
     #- cm-ejbca-p11.yaml
     #- cm-pkcs11.yaml       # <— nombre correcto
     #  - pvc-softhsm.yaml
-
+images:
+  - name: keyfactor/ejbca-ce
+    newName: ghcr.io/crisfint1425/ejbca
+    newTag: "__IMAGE_TAG__"
 # ⚠️ Repo público: evita subir Secrets en claro.
 # Si usas Sealed Secrets, descomenta lo de abajo y borra los secrets planos.
 #  - sealedsecret-ejbca-pg-app.yaml
