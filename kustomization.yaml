@@ -3,7 +3,6 @@ kind: Kustomization
 
 namespace: ejbca
 
-# Reemplaza commonLabels por labels (forma nueva)
 labels:
   - includeSelectors: true
     pairs:
@@ -13,17 +12,9 @@ resources:
   - deploy.yaml
   - service.yaml
   - ingress.yaml
-    #- cm-ejbca-p11.yaml
-    #- cm-pkcs11.yaml       # <— nombre correcto
-    #  - pvc-softhsm.yaml
+
 images:
-  - name: keyfactor/ejbca-ce
+  - name: ghcr.io/crisfint1425/ejbca
     newName: ghcr.io/crisfint1425/ejbca
-    newTag: "__IMAGE_TAG__"
-# ⚠️ Repo público: evita subir Secrets en claro.
-# Si usas Sealed Secrets, descomenta lo de abajo y borra los secrets planos.
-#  - sealedsecret-ejbca-pg-app.yaml
-# Si NO usas Sealed Secrets, puedes referenciar (temporalmente) los secrets planos:
-#  - secret-ejbca-pg-app.yaml
-#  - secret-softhsm-pins.yaml
+    newTag: "firmada1"   # valor inicial — luego Argo Image Updater pondrá digest
 
