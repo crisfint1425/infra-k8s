@@ -8,6 +8,8 @@ metadata:
   creationTimestamp: "2025-11-08T23:00:30Z"
   name: ejbca-service
   namespace: ejbca
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true  
   resourceVersion: "42182"
   uid: 1dc70e50-9412-4336-b7a1-364744de9d73
 spec:
