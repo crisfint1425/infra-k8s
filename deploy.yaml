@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: ejbca
-          image: keyfactor/ejbca-ce:latest
+          image: ghcr.io/crisfint1425/ejbca@sha256:5dcb76753adef316b73df6fc70da2a2d82c7bc82694fe2d226776eff5ecd7d9e
           imagePullPolicy: Always
           ports:
             - containerPort: 8443
