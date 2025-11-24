@@ -13,8 +13,3 @@ resources:
   - service.yaml
   - ingress.yaml
 
-images:
-  - name: ghcr.io/crisfint1425/ejbca
-    newName: ghcr.io/crisfint1425/ejbca
-    newTag: "firmada1"   # valor inicial — luego Argo Image Updater pondrá digest
-
