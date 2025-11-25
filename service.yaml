@@ -9,7 +9,7 @@ metadata:
   name: ejbca-service
   namespace: ejbca
   annotations:
-    argocd.argoproj.io/sync-options: Replace=true  
+    argocd.argoproj.io/sync-options: Replace=true
   resourceVersion: "42182"
   uid: 1dc70e50-9412-4336-b7a1-364744de9d73
 spec:
@@ -37,3 +37,5 @@ status:
     ingress:
     - ip: 192.168.181.250
       ipMode: VIP
+~
+
