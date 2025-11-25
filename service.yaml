@@ -1,41 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"ejbca-service","namespace":"ejbca"},"spec":{"ports":[{"name":"https","port":443,"protocol":"TCP","targetPort":8443}],"selector":{"app":"ejbca"},"type":"LoadBalancer"}}
-    metallb.universe.tf/ip-allocated-from-pool: metallb-pool
-  creationTimestamp: "2025-11-08T23:00:30Z"
   name: ejbca-service
   namespace: ejbca
   annotations:
     argocd.argoproj.io/sync-options: Replace=true
-  resourceVersion: "42182"
-  uid: 1dc70e50-9412-4336-b7a1-364744de9d73
+  labels:
+    app: ejbca
 spec:
-  allocateLoadBalancerNodePorts: true
-  clusterIP: 10.105.131.73
-  clusterIPs:
-  - 10.105.131.73
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-  - IPv4
-  ipFamilyPolicy: SingleStack
-  ports:
-  - name: https
-    nodePort: 31265
-    port: 443
-    protocol: TCP
-    targetPort: 8443
+  type: LoadBalancer
   selector:
     app: ejbca
-  sessionAffinity: None
-  type: LoadBalancer
-status:
-  loadBalancer:
-    ingress:
-    - ip: 192.168.181.250
-      ipMode: VIP
-~
+  ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
 
